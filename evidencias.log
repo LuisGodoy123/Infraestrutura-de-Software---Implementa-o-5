@@ -1,0 +1,7 @@
+=== Bloco 1: sync_car.h + station_init + station_wait_for_car ===
+Ambiente: WSL Ubuntu, gcc
+
+$ gcc -Wall -Wextra -c sync_car.c -o /tmp/sync_car.o
+(sem warnings)
+exit=0
+
