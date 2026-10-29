@@ -5,3 +5,29 @@ $ gcc -Wall -Wextra -c sync_car.c -o /tmp/sync_car.o
 (sem warnings)
 exit=0
 
+=== Bloco 2: station_load_car + station_on_board (all_aboard no header) ===
+Ambiente: WSL Ubuntu, gcc. Runner: sync_car-runner.c (fornecido pelo professor)
+
+$ gcc -Wall -Wextra -pthread -o sync_car sync_car-runner.c sync_car.c
+sync_car-runner.c: In function 'alarm_handler':
+sync_car-runner.c:54:24: warning: unused parameter 'foo' [-Wunused-parameter]
+(unico warning, no runner; sync_car.c sem warnings)
+build_exit=0
+
+$ ./sync_car
+car entering station with 8 free seats
+car departed station with 8 new passenger(s) (expected 8)
+car entering station with 37 free seats
+car departed station with 37 new passenger(s) (expected 37)
+car entering station with 5 free seats
+car departed station with 5 new passenger(s) (expected 5)
+car entering station with 46 free seats
+car departed station with 46 new passenger(s) (expected 46)
+car entering station with 4 free seats
+car departed station with 4 new passenger(s) (expected 4)
+Looks good!
+run_exit=0
+
+$ for i in $(seq 200); do ./sync_car >/dev/null 2>&1; done
+ok=200 fail=0
+
