@@ -31,3 +31,32 @@ run_exit=0
 $ for i in $(seq 200); do ./sync_car >/dev/null 2>&1; done
 ok=200 fail=0
 
+=== Bloco 3: Makefile (+ sync_car-runner.c copiado para o repo) ===
+Ambiente: WSL Ubuntu, gcc, make
+
+$ make clean
+rm -f sync_car
+$ make
+gcc -Wall -Wextra -pthread -o sync_car sync_car-runner.c sync_car.c
+sync_car-runner.c: In function 'alarm_handler':
+sync_car-runner.c:54:24: warning: unused parameter 'foo' [-Wunused-parameter]
+(unico warning, no runner; build ok)
+$ ls -l sync_car
+-rwxrwxrwx 1 nononha nononha 17480 Oct 30 23:05 sync_car
+$ ./sync_car
+car entering station with 14 free seats
+car departed station with 14 new passenger(s) (expected 14)
+car entering station with 23 free seats
+car departed station with 23 new passenger(s) (expected 23)
+car entering station with 42 free seats
+car departed station with 42 new passenger(s) (expected 42)
+car entering station with 31 free seats
+car departed station with 21 new passenger(s) (expected 21)
+Looks good!
+exit=0
+$ make -q   (alvo atualizado, exit 0)
+$ make clean
+rm -f sync_car
+$ ls
+Makefile  README.md  evidencias.log  sync_car-runner.c  sync_car.c  sync_car.h
+
