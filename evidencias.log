@@ -60,3 +60,12 @@ rm -f sync_car
 $ ls
 Makefile  README.md  evidencias.log  sync_car-runner.c  sync_car.c  sync_car.h
 
+=== Bloco 4: README.md ===
+Ambiente: Ubuntu 26.04 LTS (WSL), gcc 15.2.0, GNU Make 4.4.1
+
+$ make && for i in $(seq 200); do ./sync_car > /dev/null 2>&1 || echo falhou; done; echo LOOP_DONE
+LOOP_DONE
+(nenhum "falhou" impresso: 200/200 execucoes ok)
+$ make clean
+rm -f sync_car
+
