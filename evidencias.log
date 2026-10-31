@@ -84,3 +84,53 @@ lagi/sync_car.c
 $ (extraido em diretorio limpo) cd lagi && make && ./sync_car | tail -n 1
 Looks good!
 
+=== Bloco 6: revisao final e testes extras ===
+Ambiente: Ubuntu 26.04 LTS (WSL), gcc 15.2.0
+
+Primitivas em sync_car.c: pthread_mutex_init/lock/unlock, pthread_cond_init/wait/signal/broadcast.
+Sem semaforos. 1 pthread_mutex_t na struct station.
+
+$ gcc -std=c99 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Wpedantic -c sync_car.c
+(sem warnings) exit=0
+
+$ 500x ./sync_car          -> ok=500 fail=0
+$ 300x taskset -c 0 ./sync_car (1 CPU) -> ok=300 fail=0
+
+Testes extras (cenarios do enunciado, programa proprio fora do pacote):
+-- T1: carro com sobra de assentos espera on_board de todos
+ok:   sem carro, wait_for_car nao retorna
+ok:   3 passageiros retornam antes de qualquer on_board
+ok:   load_car nao retorna antes dos on_board
+ok:   load_car retorna apos todos embarcarem (fila vazia)
+-- T2: carro lota, sobram passageiros
+ok:   so 2 passageiros retornam (2 assentos)
+ok:   load_car espera on_board
+ok:   load_car retorna com carro cheio
+ok:   3 restantes continuam bloqueados apos o carro sair
+ok:   proximo carro leva os 3 restantes
+ok:   segundo carro retorna
+-- T3: passageiro chega com o carro carregando
+ok:   3 embarcaram
+ok:   retardatario embarca (ha assento)
+ok:   load_car ainda espera o 4o on_board
+ok:   load_car retorna apos o 4o on_board
+-- T4: sem busy-wait
+      CPU gasta em 1s de espera: 0.0000s
+ok:   CPU ~0 enquanto carro espera on_board
+ok:   carro retorna
+-- T5: retorno imediato
+ok:   sem passageiros: load_car(10) retorna na hora
+ok:   carro ja saiu: passageiros novos bloqueiam (nao pegam carona)
+ok:   load_car(0) com 4 esperando retorna na hora
+ok:   carro com assentos leva os 4
+ok:   carro retorna
+(21 ok, 0 FAIL; 20 execucoes seguidas ok=20 fail=0)
+
+ThreadSanitizer (-fsanitize=thread):
+  runner + sync_car.c, 5 execucoes: 25 avisos, todos em variaveis globais do
+  runner (threads_completed/load_car_returned); 0 envolvem sync_car.c; 0 deadlock/lock-order.
+  testes extras, 1 station por cenario: 0 frames em sync_car.c (avisos restantes
+  sao nas globais do proprio teste).
+valgrind/helgrind: nao disponivel no ambiente.
+clang: nao disponivel no ambiente.
+
