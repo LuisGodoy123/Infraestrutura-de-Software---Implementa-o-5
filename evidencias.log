@@ -69,3 +69,18 @@ LOOP_DONE
 $ make clean
 rm -f sync_car
 
+=== Bloco 5: pacote lagi.tar ===
+Ambiente: Ubuntu 26.04 LTS (WSL)
+
+$ tar cf lagi.tar lagi
+$ tar tf lagi.tar
+lagi/
+lagi/evidencias.log
+lagi/README.md
+lagi/Makefile
+lagi/sync_car-runner.c
+lagi/sync_car.h
+lagi/sync_car.c
+$ (extraido em diretorio limpo) cd lagi && make && ./sync_car | tail -n 1
+Looks good!
+
