@@ -134,3 +134,29 @@ ThreadSanitizer (-fsanitize=thread):
 valgrind/helgrind: nao disponivel no ambiente.
 clang: nao disponivel no ambiente.
 
+=== Bloco 7: segunda revisao, testes de carga e stress ===
+Ambiente: Ubuntu 26.04 LTS (WSL), gcc 15.2.0
+Hash SHA-256 do sync_car-runner.c do repo (identico ao enviado pelo professor):
+9597E03794B78AAA77F0219C5E5F91BF202C31B47E50AB5CC2FC192003129679
+
+$ tar xf lagi.tar (pasta limpa) && make && ./sync_car
+Looks good!  exit=0
+runner 1000x (pacote extraido): ok=1000 fail=0
+runner 8 instancias em paralelo x 100: 800/800 ok
+runner 8 instancias na mesma CPU (taskset -c 0) x 50: 400/400 ok
+runner com -O0 / -O2 / -O3, 50x cada: 150/150 ok
+
+Stress (programa proprio fora do pacote; rodadas randomizadas conferindo
+embarcados == min(assentos, fila), load_car so retorna apos todos os on_board,
+boarding==0 e free_seats==0 no retorno; fase B com passageiros chegando
+continuamente, 400 threads, conservacao de passageiros):
+$ ./stress 12345
+seed=12345 rounds=150 passengers=400 checks=897 fails=0
+30 seeds distintas: ok=30 fail=0
+15x com 1 CPU: ok=15 fail=0
+4 instancias paralelas x 8: 32/32 ok
+pesado (1500 passageiros, 100 rodadas) 3x: fails=0 nas tres
+ASan+UBSan: stress 5x fails=0; runner "Looks good!" exit=0
+ThreadSanitizer (stress, variaveis do teste atomicas): 3 execucoes, 0 avisos, fails=0
+Repo x lagi.tar: sync_car.c, sync_car.h, sync_car-runner.c, Makefile, README.md identicos
+
